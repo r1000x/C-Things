@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AlienScript : MonoBehaviour
+{
+    public Transform Car;
+    public float followSharpness = 0.1f;
+    
+    Vector3 _followOffset;
+    
+    void Start()
+    {
+        // Cache the initial offset at time of load/spawn:
+        _followOffset = transform.position - Car.position;
+    }
+
+    void LateUpdate()
+    {
+        // Apply that offset to get a target position
+        Vector3 CarPosition = Car.position + _followOffset;
+        
+        // Keep our y position unchanged
+        CarPosition.y = transform.position.y;
+        
+        // Smooth follow
+        transform.position += (CarPosition - transform.position) * followSharpness;
+    }
+}
+
+
+

@@ -1,0 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    private const int MaxPitch = 89;
+    [SerializeField] private Transform follow;
+    [SerializeField] private Vector3 standOffset = new(x:0.28f, y:1.59, z:-0.22f);
+    [SerializeField] private float turnRate = 510f;
+    private Vector3 _back;
+    private Matrix4x4 _originTransform;
+    private CarInput carInput;
+    private PlayerMovement _playerMovement;
+    private Vector3 _right;
+    private Quaternion _rotY;
+    private Quaternion _rotX;
+ 
+ 
+    private void Awake()
+    {
+        carInput = GameObject.Find("GameScript/Input").GetComponent<CarInput>();
+        _CarMovement = GameObject.Find("Player").GetComponent<PlayerMovement>();
+    }  
+ 
+ 
+    void Start()
+    {
+         _originTransform = follow.localToWorldMatrix;
+         _back = _originTransform.MultiplyVector(Vector3.back);
+         _right = _originTransform.MultiplyVector(Vector3.right);   
+    }
+    
+
+    void LateUpdate()
+    {
+        var yaw = CarInput.LookEuler.y;
+        var pitch = Mathf.Clamp(carInput.LookEuler.x, MaxPitch, MaxPitch);        
+        _rotY = Quaternion.RotateTowards(_rotY, Quaternion.AngleAxis(yaw, Vector3.up), Time.deltaTime * turnRate);
+        _rotX = Quaternion.RotateTowards(_rotX, Quaternion.AngleAxis(pitch, _right), Time.deltaTime * turnRate);
+    }       
+}        
+        
